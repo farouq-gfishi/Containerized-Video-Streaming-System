@@ -1,0 +1,64 @@
+name: CI/CD pipline for video-streaming app
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: home
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DATA_BASE_PASSWORD }}
+        ports:
+          - 3306:3306
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Build file-system and authentication services & push to docker hub
+      run: |
+        cd file-system-service
+        mvn clean install
+        docker build -t docker.io/farooqtahsin/file-system-service -f Dockerfile .
+        docker push docker.io/farooqtahsin/file-system-service
+        cd ..
+        cd authentication
+        mvn clean install
+        docker build -t docker.io/farooqtahsin/authentication-service -f Dockerfile .
+        docker push docker.io/farooqtahsin/authentication-service
+
+    - name: Build upload-video and video-streaming services & push to docker hub
+      env:
+          DATABASE_NAME: home
+          DATABASE_USERNAME: ${{ secrets.DATA_BASE_USER_NAME }}          
+          DATABASE_PASSWORD: ${{ secrets.DATA_BASE_PASSWORD }}       
+          DATABASE_ENDPOINT: 127.0.0.1
+      run: |
+        cd upload-video
+        mvn clean install
+        docker build -t docker.io/farooqtahsin/upload-video-service -f Dockerfile .
+        docker push docker.io/farooqtahsin/upload-video-service
+        cd ..
+        cd video-streaming-service
+        mvn clean install
+        docker build -t docker.io/farooqtahsin/video-streaming-service -f Dockerfile .
+        docker push docker.io/farooqtahsin/video-streaming-service
