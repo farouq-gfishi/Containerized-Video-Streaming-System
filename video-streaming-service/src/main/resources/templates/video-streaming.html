@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Video Streaming</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f8f9fa;
+                margin: 0;
+                padding: 0;
+            }
+            h2 {
+                color: #4CAF50;
+                text-align: center; /* Add this line to center the text */
+                margin-top: 20px; /* Add some top margin for spacing */
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            header {
+                text-align: center;
+                padding: 20px 0;
+            }
+            ul {
+                list-style: none;
+                padding: 0;
+            }
+            li {
+                margin-bottom: 30px;
+                background-color: #fff;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            h3 {
+                background-color: #4CAF50;
+                color: #fff;
+                padding: 10px;
+                margin: 0;
+            }
+            .video-container {
+                width: 100%;
+                max-width: 640px; /* Set your desired max width for the video container */
+                margin: 0 auto;
+            }
+            video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+            p {
+                text-align: center;
+                color: #555;
+            }
+            @media (max-width: 600px) {
+                li {
+                    margin-bottom: 20px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Video Streaming</h2>
+        <div th:if="${videoResources}" class="container">
+            <ul>
+                <th:block th:each="video, name : ${videoResources}">
+                    <div class="video-container">
+                        <li>
+                            <h3 th:text="${names[name.index]}"></h3>
+                            <video width="320" height="240" controls>
+                                <source th:src="@{'data:' + ${video.contentType} + ';base64,' + #strings.arrayEncode(video.data)}"
+                                        type="${video.contentType}" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </li>
+                    </div>
+                </th:block>
+            </ul>
+        </div>
+        <div th:unless="${videoResources}">
+            <p>No videos available.</p>
+        </div>
+    </body>
+
+</html>
