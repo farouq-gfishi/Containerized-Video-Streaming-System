@@ -2,7 +2,7 @@ version: "3.8"
 services:
   upload-video:
     container_name: upload-video-service
-    build: ./upload-video
+    image: farooqtahsin/upload-video-service
     restart: on-failure
     ports:
       - "8081:8080"
@@ -26,18 +26,18 @@ services:
       - mysqldb-data:/var/lib/mysql
 
   authentication-service:
-    build: ./authentication
+    build: farooqtahsin/authentication-service
     container_name: authentication-service
 
 
   file-system-service:
-    build: ./file-system-service
+    image: farooqtahsin/file-system-service
     container_name: file-system-service
     volumes:
       - video-storage:/app/videos
 
   video-streaming-service:
-    build: ./video-streaming-service
+    image: farooqtahsin/video-streaming-service
     container_name: video-streaming-service
     restart: on-failure
     ports:
