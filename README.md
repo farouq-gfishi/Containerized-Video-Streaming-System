@@ -51,8 +51,7 @@ The Containerized Video Streaming System is a distributed application that consi
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/your-repository.git
-cd your-repository
+git clon https://github.com/farouq-gfishi/Containerized-Video-Streaming-System.git
 ```
 
 ### Build the Project
